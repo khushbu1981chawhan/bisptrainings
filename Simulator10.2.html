@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Final Accounts Template Simulator</title>
+
+<style>
+body{
+font-family:Arial;
+background:#eef4fb;
+margin:20px;
+}
+
+.container{
+width:1100px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #999;
+}
+
+h2{
+text-align:center;
+color:#003366;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#003366;
+color:white;
+padding:8px;
+}
+
+td{
+border:1px solid #ccc;
+padding:6px;
+text-align:center;
+}
+
+.section{
+background:#d9edf7;
+font-weight:bold;
+}
+
+input{
+width:90px;
+text-align:right;
+border:none;
+}
+
+.buttons{
+margin-top:20px;
+text-align:center;
+}
+
+button{
+padding:10px 18px;
+margin:5px;
+border:none;
+border-radius:5px;
+font-size:15px;
+color:white;
+cursor:pointer;
+}
+
+.calc{background:#28a745;}
+.essbase{background:#6f42c1;}
+.export{background:#007bff;}
+.reset{background:#dc3545;}
+
+#result{
+display:none;
+margin-top:20px;
+padding:15px;
+background:#ffffcc;
+border:1px solid #999;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<div style="display:flex;align-items:center;justify-content:space-between;background:#003366;color:white;padding:15px;border-radius:10px;margin-bottom:20px;"><div><img src="BISP logo(22).png" style="height:70px;"></div><div style="text-align:center;flex:1"><h2 style="margin:0;color:white;">BISP Training</h2><div style="color:#FFD700;font-size:22px;">Final Accounts Template Simulator</div><div>+91 7694095404 | www.bisptraining.com</div></div></div>
+
+<h2>Final Accounts Template (P & L)</h2>
+
+<table>
+
+<tr class="section">
+<td>Item</td>
+<td>1st Qtr</td>
+</tr>
+
+<tr>
+<td>Volume</td>
+<td><input id="volume" value="6000"></td>
+</tr>
+
+<tr>
+<td>Unit Price</td>
+<td><input id="price" value="10"></td>
+</tr>
+
+<tr>
+<td><b>Turnover</b></td>
+<td id="turnover">60000</td>
+</tr>
+
+<tr class="section">
+<td colspan="2">Direct Cost</td>
+</tr>
+
+<tr>
+<td>Materials</td>
+<td><input id="materials" value="24000"></td>
+</tr>
+
+<tr>
+<td>Labour</td>
+<td><input id="labour" value="10000"></td>
+</tr>
+
+<tr>
+<td>Energy</td>
+<td><input id="energy" value="8000"></td>
+</tr>
+
+<tr>
+<td><b>Total Direct Cost</b></td>
+<td id="direct">42000</td>
+</tr>
+
+<tr>
+<td><b>Gross Profit</b></td>
+<td id="gross">18000</td>
+</tr>
+
+<tr class="section">
+<td colspan="2">Other Cost</td>
+</tr>
+
+<tr>
+<td>Administration</td>
+<td><input id="admin" value="1500"></td>
+</tr>
+
+<tr>
+<td>Depreciation</td>
+<td><input id="dep" value="1500"></td>
+</tr>
+
+<tr>
+<td>Finance Charges</td>
+<td><input id="finance" value="1200"></td>
+</tr>
+
+<tr>
+<td>Maintenance</td>
+<td><input id="maint" value="600"></td>
+</tr>
+
+<tr>
+<td>Salaries</td>
+<td><input id="salary" value="1300"></td>
+</tr>
+
+<tr>
+<td><b>Total Other Cost</b></td>
+<td id="other">6100</td>
+</tr>
+
+<tr>
+<td><b>Net Profit Before Tax</b></td>
+<td id="profit">11900</td>
+</tr>
+
+</table>
+
+<div class="buttons">
+
+<button class="calc" onclick="calculate()">Show Calculation</button>
+
+<button class="essbase" onclick="essbase()">Essbase Calculation</button>
+
+<button class="export" onclick="exportExcel()">Export to Excel</button>
+
+<button class="reset" onclick="location.reload()">Reset</button>
+
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function calculate(){
+
+var volume=Number(document.getElementById("volume").value);
+
+var price=Number(document.getElementById("price").value);
+
+var turnover=volume*price;
+
+document.getElementById("turnover").innerHTML=turnover;
+
+var materials=Number(document.getElementById("materials").value);
+
+var labour=Number(document.getElementById("labour").value);
+
+var energy=Number(document.getElementById("energy").value);
+
+var direct=materials+labour+energy;
+
+document.getElementById("direct").innerHTML=direct;
+
+var gross=turnover-direct;
+
+document.getElementById("gross").innerHTML=gross;
+
+var admin=Number(document.getElementById("admin").value);
+
+var dep=Number(document.getElementById("dep").value);
+
+var finance=Number(document.getElementById("finance").value);
+
+var maint=Number(document.getElementById("maint").value);
+
+var salary=Number(document.getElementById("salary").value);
+
+var other=admin+dep+finance+maint+salary;
+
+document.getElementById("other").innerHTML=other;
+
+var profit=gross-other;
+
+document.getElementById("profit").innerHTML=profit;
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("result").innerHTML="<h3>Calculation</h3>"
++"Turnover = Volume × Price = "+volume+" × "+price+" = <b>"+turnover+"</b><br><br>"
++"Gross Profit = "+turnover+" - "+direct+" = <b>"+gross+"</b><br><br>"
++"Net Profit = "+gross+" - "+other+" = <b>"+profit+"</b>";
+
+}
+
+function essbase(){
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("result").innerHTML="<h3>Essbase Calculation</h3>"
++"Turnover = Volume * Unit Price<br><br>"
++"Gross Profit = Turnover - Total Direct Cost<br><br>"
++"Net Profit = Gross Profit - Total Other Cost";
+
+}
+
+function exportExcel(){
+
+var table=document.querySelector("table").outerHTML;
+
+var url='data:application/vnd.ms-excel,'+encodeURIComponent(table);
+
+var a=document.createElement("a");
+
+a.href=url;
+
+a.download="FinalAccountsTemplate.xls";
+
+a.click();
+
+}
+
+</script>
+
+</body>
+</html>
