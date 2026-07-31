@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Ratio Analysis Simulator</title>
+<style>
+
+body{
+font-family:Arial;
+background:#eef4ff;
+margin:20px;
+}
+
+h2{
+background:#003366;
+color:white;
+padding:12px;
+text-align:center;
+border-radius:6px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th{
+background:#1565C0;
+color:white;
+padding:8px;
+}
+
+td{
+border:1px solid #999;
+padding:6px;
+text-align:center;
+}
+
+input{
+width:70px;
+text-align:center;
+border:none;
+}
+
+.total{
+background:#d9f5d9;
+font-weight:bold;
+}
+
+button{
+padding:10px 15px;
+margin:10px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+color:white;
+}
+
+.green{background:#28a745;}
+.orange{background:#ff9800;}
+.blue{background:#2196f3;}
+.red{background:#dc3545;}
+
+#result{
+display:none;
+background:white;
+padding:15px;
+margin-top:20px;
+border-radius:6px;
+}
+
+</style>
+</head>
+<body>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#003366;color:white;padding:12px;border-radius:8px;margin-bottom:15px;">
+<div style="display:flex;align-items:center;gap:12px">
+<img src="BISP logo(15).png" style="height:70px"/>
+<div style="font-size:26px;font-weight:bold">Ratio Analysis Simulator</div>
+</div>
+<div style="text-align:right">
+<div style="font-size:24px;font-weight:bold">BISP Training</div>
+<div>Mobile: +91 76940 95404</div>
+<div>www.bisptraining.com</div>
+</div>
+</div>
+<table>
+<tr>
+<th>Ratio</th>
+<th>1st Qtr</th>
+<th>2nd Qtr</th>
+<th>3rd Qtr</th>
+<th>4th Qtr</th>
+</tr>
+<tr>
+<td>Current Ratio</td>
+<td><input value="3.51"/></td>
+<td><input value="3.31"/></td>
+<td><input value="3.29"/></td>
+<td><input value="3.13"/></td>
+</tr>
+<tr>
+<td>Quick Ratio</td>
+<td><input value="2.50"/></td>
+<td><input value="2.39"/></td>
+<td><input value="2.41"/></td>
+<td><input value="2.32"/></td>
+</tr>
+<tr>
+<td>Equity to Debt</td>
+<td><input value="0.78"/></td>
+<td><input value="0.75"/></td>
+<td><input value="0.75"/></td>
+<td><input value="0.73"/></td>
+</tr>
+<tr>
+<td>Gross Profit %</td>
+<td><input value="30.00"/></td>
+<td><input value="31.74"/></td>
+<td><input value="33.43"/></td>
+<td><input value="35.08"/></td>
+</tr>
+<tr>
+<td>Net Profit %</td>
+<td><input value="0.33"/></td>
+<td><input value="2.09"/></td>
+<td><input value="3.80"/></td>
+<td><input value="5.44"/></td>
+</tr>
+</table>
+<br/>
+<button class="green" onclick="calc()">
+Show Calculation
+</button>
+<button class="orange" onclick="essbase()">
+Essbase Calculation
+</button>
+<button class="blue" onclick="excel()">
+Export to Excel
+</button>
+<button class="red" onclick="location.reload()">
+Reset
+</button>
+<div id="result"></div>
+<script>
+
+function calc(){
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("result").innerHTML=
+
+"<h3>Calculation</h3>"+
+
+"Current Ratio = Current Assets ÷ Current Liabilities<br><br>"+
+
+"Quick Ratio = (Current Assets - Inventory) ÷ Current Liabilities<br><br>"+
+
+"Equity to Debt = Owners Equity ÷ Total Debt<br><br>"+
+
+"Gross Profit % = Gross Profit ÷ Sales ×100<br><br>"+
+
+"Net Profit % = Net Profit ÷ Sales ×100";
+
+}
+
+function essbase(){
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("result").innerHTML=
+
+"<pre>"+
+
+"SET UPDATECALC OFF;\n\n"+
+
+"FIX(\"Actual\",\"FY26\")\n\n"+
+
+"\"Current Ratio\"=\"Current Assets\"/\"Current Liabilities\";\n\n"+
+
+"\"Quick Ratio\"=(\"Current Assets\"-\"Inventory\")/\"Current Liabilities\";\n\n"+
+
+"\"Gross Profit %\"=(\"Gross Profit\"/\"Sales\")*100;\n\n"+
+
+"\"Net Profit %\"=(\"Net Profit\"/\"Sales\")*100;\n\n"+
+
+"ENDFIX"+
+
+"</pre>";
+
+}
+
+function excel(){
+
+let csv="Ratio,Q1,Q2,Q3,Q4\n";
+
+document.querySelectorAll("table tr").forEach(function(row){
+
+let cols=row.querySelectorAll("td");
+
+if(cols.length>0){
+
+let line=[];
+
+cols.forEach(function(col){
+
+let inp=col.querySelector("input");
+
+line.push(inp?inp.value:col.innerText);
+
+});
+
+csv+=line.join(",")+"\n";
+
+}
+
+});
+
+let blob=new Blob([csv],{type:"text/csv"});
+
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+
+a.download="RatioAnalysis.csv";
+
+a.click();
+
+}
+
+</script>
+</body>
+</html>

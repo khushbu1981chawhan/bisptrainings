@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BISP Solutions - Assessment Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #1e293b;
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid #475569;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #f05a28;
+            padding-bottom: 18px;
+            margin-bottom: 30px;
+        }
+
+        .logo-area {
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 10px;
+        }
+
+        .logo-area img {
+            max-height: 45px;
+            width: auto;
+            display: block;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        .header-meta a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .global-timer-container {
+            background-color: #334155;
+            height: 12px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .global-timer-bar {
+            background: linear-gradient(90deg, #f05a28, #ef4444);
+            height: 100%;
+            width: 100%;
+            transition: width 0.1s linear;
+        }
+
+        .static-question-block {
+            background-color: #26334d;
+            border: 1px solid #3b4f73;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 25px;
+        }
+
+        .block-tag {
+            color: #38bdf8;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .block-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        .option-row {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .option-row:hover {
+            border-color: #38bdf8;
+            background-color: #2c3e50;
+        }
+
+        .option-row input {
+            margin-right: 15px;
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+
+        .option-text-span {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .instant-feedback-line {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            line-height: 1.5;
+        }
+
+        .action-hub-footer {
+            text-align: center;
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+
+        .btn-submit {
+            padding: 14px 50px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #0054a6 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 84, 166, 0.4);
+        }
+
+        #score-summary-board {
+            display: none;
+            background-color: #0f172a;
+            border: 2px dashed #475569;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        #cert-frame {
+            display: none;
+            background-color: white;
+            color: #0f172a;
+            border: 12px double #0054a6;
+            padding: 45px;
+            margin-top: 35px;
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #cert-frame, #cert-frame * { visibility: visible; }
+            #cert-frame {
+                display: block !important;
+                position: absolute;
+                left: 0; top: 0; width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo-area">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAA1CAMAAADf6RcoAAAAaVBMVEUAAAA0g6E0g6E0g6E3hKI3haM3haM0g6E0g6E0g6E3haM0g6E0g6E0g6E0g6E0g6E0g6E0g6E0g6E3haM0g6E0g6E3hKI3hKI3haM0g6E3haM3haM0g6E3haM0g6E3haM0g6E3hKI3haO73z8bAAAAI3RSTlMA9wX2CgX97vIFpOfUq8S7ZFRCIB9fTDoWEvfu3rNDLCEH8UizvAAAAdBJREFUeNrt29uWwyAMBVAICm7iJS9tS///b9tAm9bptNPM7MPWvS8gAsYwZpIkSZIkSZIk6Z9Iu9tIu8eS3o0ke6Y0PZ6XNEnzNEnzNEnzNEmvRnoXklYnaZ6kZ0lK0uORpEeStN1L+gM6CqCjADoKoKMAOgqgowA6CqCjADoKoKMAvof0wZpWJ+m9NY0WafPUtDpJzy9Nk7S6pPevRtoeaVrcSnot0vpZkuZI2r6WpE6SFr6WpOnfS7In8/pIenwsafMsSUl6PJL0SJKeNf+M/E/34A/78pEeywOPl7w8MDzwed7zwvNnPD/C5xM+X/D5XHi+7PmU7w3fF3wK9/fK/Q5Z7pDkH6j6UuEuv/T0U+YmZf5b2Z/uV3/U/u7Xw93G8N/P+L+Z9X9390vUvC8v6X55w++A98D3XvF77fE19pBbyO9h8wVwE7mBXBw3kR+X34Gfkt/D5Yvgbpcr6F6HK79cOdwscFfQ69X6M+T8fshxLHL9F+S7YfmOWX6NfEcsXw7pOfWb9Hvlfev7vff90PvB98T3S/ff9wD/Bv+H6v9S4yYnSZIkSZIkSZIkfcoX440L6XgAt9cAAAAASUVORK5CYII=" alt="BISP Solutions Logo">
+        </div>
+        <div class="header-meta">
+            <strong>BISP Solutions Inc.</strong><br>
+            Website: <a href="https://bisptrainings.com" target="_blank">://bisptrainings.com</a><br>
+            Call Us: +91 769-409-5404
+        </div>
+    </header>
+
+    <div class="global-timer-container">
+        <div id="countdown-visual-bar" class="global-timer-bar"></div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="margin: 0; color: #ffffff;">Oracle EDMCS & ARCS Foundation Test</h2>
+        <p style="color: #94a3b8; font-size: 14px; margin-top: 5px;">⚡ Rule Notice: 5 Seconds global screen activity timer is running.</p>
+    </div>
+
+    <form id="quiz-sheet-form">
+
+        <!-- Q1 -->
+        <div class="static-question-block" id="block-0">
+            <div class="block-tag">Module Target: EDMCS Overview</div>
+            <div class="block-title">Q1. What is the primary purpose of Oracle EDMCS (Enterprise Data Management Cloud Service)?</div>
+            <div class="option-row" onclick="checkRowClick(0, 0)"><input type="radio" name="q0" value="0"><span class="option-text-span">To process payroll transactions for employees across the enterprise.</span></div>
+            <div class="option-row" onclick="checkRowClick(0, 1)"><input type="radio" name="q0" value="1"><span class="option-text-span">To manage and synchronize enterprise master data across different EPM and ERP applications.</span></div>
+            <div class="option-row" onclick="checkRowClick(0, 2)"><input type="radio" name="q0" value="2"><span class="option-text-span">To generate consolidated financial reports for regulatory compliance.</span></div>
+            <div class="option-row" onclick="checkRowClick(0, 3)"><input type="radio" name="q0" value="3"><span class="option-text-span">To automate the reconciliation and matching of balance sheet accounts.</span></div>
+            <div class="instant-feedback-line" id="feed-0"></div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="static-question-block" id="block-1">
+            <div class="block-tag">Module Target: ARCS Overview</div>
+            <div class="block-title">Q2. Which of the following best describes the function of Oracle ARCS (Account Reconciliation Cloud Service)?</div>
+            <div class="option-row" onclick="checkRowClick(1, 0)"><input type="radio" name="q1" value="0"><span class="option-text-span">It maps and synchronizes dimension data across various financial and operational applications.</span></div>
+            <div class="option-row" onclick="checkRowClick(1, 1)"><input type="radio" name="q1" value="1"><span class="option-text-span">It consolidates financial data and generates statutory multi-currency reports.</span></div>
+            <div class="option-row" onclick="checkRowClick(1, 2)"><input type="radio" name="q1" value="2"><span class="option-text-span">It designs and builds custom budgeting, forecasting, and planning models.</span></div>
+            <div class="option-row" onclick="checkRowClick(1, 3)"><input type="radio" name="q1" value="3"><span class="option-text-span">It streamlines and automates the reconciliation of balance sheets and other accounts.</span></div>
+            <div class="instant-feedback-line" id="feed-1"></div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="static-question-block" id="block-2">
+            <div class="block-tag">Module Target: EDMCS Role in EPM</div>
+            <div class="block-title">Q3. How does EDMCS primarily add value to an organization's EPM ecosystem?</div>
+            <div class="option-row" onclick="checkRowClick(2, 0)"><input type="radio" name="q2" value="0"><span class="option-text-span">By directly processing automated journal entries into the general ledger.</span></div>
+
+
+
+
+
+
+
