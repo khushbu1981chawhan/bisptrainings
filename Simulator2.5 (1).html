@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Statistics Interactive Simulator</title>
+
+<style>
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f2f6fb;
+    margin:20px;
+}
+.container{
+    max-width:1100px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+h2{
+    background:#003366;
+    color:#fff;
+    padding:12px;
+    border-radius:6px;
+    text-align:center;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+th{
+    background:#1565c0;
+    color:#fff;
+}
+th,td{
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:center;
+}
+input{
+    width:70px;
+    text-align:center;
+}
+.buttons{
+    margin-top:20px;
+    text-align:center;
+}
+button,a.btn{
+    padding:10px 18px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    background:#1565c0;
+    color:white;
+    text-decoration:none;
+    cursor:pointer;
+    font-weight:bold;
+}
+button:hover,a.btn:hover{
+    background:#0d47a1;
+}
+#result,#calc,#essbase{
+    margin-top:20px;
+    background:#eef5ff;
+    padding:15px;
+    border-left:5px solid #1565c0;
+    display:none;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<div style="display:flex;align-items:center;justify-content:space-between;background:#ffffff;border-bottom:3px solid #0b5cab;padding:10px 15px;margin-bottom:15px;">
+<div style="display:flex;align-items:center;gap:15px;">
+<img src="BISP logo(14).png" style="height:60px;">
+<div>
+<div style="font-size:26px;font-weight:bold;color:#0b5cab;">BISP Trainings</div>
+<div><b>Mobile:</b> +91 7694095404</div>
+<div><b>Website:</b> www.bisptrainings.com</div>
+</div></div></div>
+
+
+<h2>Email Statistics Interactive Simulator</h2>
+
+<table>
+<tr>
+<th>Month</th>
+<th>Monday</th>
+<th>Tuesday</th>
+<th>Wednesday</th>
+<th>Thursday</th>
+<th>Friday</th>
+</tr>
+
+<tr>
+<td>January</td>
+<td><input value="570"></td>
+<td><input value="539"></td>
+<td><input value="580"></td>
+<td><input value="563"></td>
+<td><input value="497"></td>
+</tr>
+
+<tr>
+<td>February</td>
+<td><input value="520"></td>
+<td><input value="480"></td>
+<td><input value="510"></td>
+<td><input value="500"></td>
+<td><input value="490"></td>
+</tr>
+
+<tr>
+<td>March</td>
+<td><input value="562"></td>
+<td><input value="588"></td>
+<td><input value="502"></td>
+<td><input value="516"></td>
+<td><input value="540"></td>
+</tr>
+
+</table>
+
+<div class="buttons">
+
+<button onclick="calculate()">Calculate</button>
+
+<button onclick="showCalculation()">Show Calculation</button>
+
+<button onclick="showEssbase()">Essbase Calculation</button>
+
+<button onclick="exportExcel()">Export Excel</button>
+
+<button onclick="location.reload()">Reset</button>
+
+<a class="btn"
+target="_blank"
+href="https://sonalji2022.github.io/BISP-Trainings/EPM%20Skills%20Assessment.html">
+EPM Skills Assessment
+</a>
+
+<a class="btn"
+target="_blank"
+href="https://sonalji2022.github.io/BISP-Trainings/BISP_FCCS_Oracle%20Certification%20Practice.html">
+FCCS Practice
+</a>
+
+</div>
+
+<div id="result"></div>
+
+<div id="calc"></div>
+
+<div id="essbase"></div>
+
+</div>
+
+<script>
+
+function getValues(){
+
+let vals=[];
+
+document.querySelectorAll("input").forEach(function(i){
+vals.push(Number(i.value));
+});
+
+return vals;
+
+}
+
+function calculate(){
+
+let data=getValues();
+
+let total=data.reduce((a,b)=>a+b,0);
+
+let avg=(total/data.length).toFixed(2);
+
+let max=Math.max(...data);
+
+let min=Math.min(...data);
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("result").innerHTML=
+
+"<h3>Result</h3>"+
+"<b>Total Emails :</b> "+total+
+"<br><b>Average :</b> "+avg+
+"<br><b>Maximum :</b> "+max+
+"<br><b>Minimum :</b> "+min;
+
+}
+
+function showCalculation(){
+
+let data=getValues();
+
+let total=data.reduce((a,b)=>a+b,0);
+
+document.getElementById("calc").style.display="block";
+
+document.getElementById("calc").innerHTML=
+
+"<h3>Calculation</h3>"+
+"Total = "+data.join(" + ")+" = <b>"+total+"</b><br><br>"+
+"Average = "+total+" / "+data.length+" = <b>"+(total/data.length).toFixed(2)+"</b>";
+
+}
+
+function showEssbase(){
+
+document.getElementById("essbase").style.display="block";
+
+document.getElementById("essbase").innerHTML=
+
+"<h3>Essbase Calculation</h3><pre>"+
+'FIX("Jan")\n'+
+'   "Total Emails"=@SUM("Mon":"Fri");\n'+
+'   "Average"=@AVG("Mon":"Fri");\n'+
+'   "Maximum"=@MAX("Mon":"Fri");\n'+
+'   "Minimum"=@MIN("Mon":"Fri");\n'+
+'ENDFIX;'+
+"</pre>";
+
+}
+
+function exportExcel(){
+
+let table=document.querySelector("table").outerHTML;
+
+let url='data:application/vnd.ms-excel,'+encodeURIComponent(table);
+
+let link=document.createElement("a");
+
+link.href=url;
+
+link.download="Email_Statistics.xls";
+
+link.click();
+
+}
+
+</script>
+
+</body>
+</html>
