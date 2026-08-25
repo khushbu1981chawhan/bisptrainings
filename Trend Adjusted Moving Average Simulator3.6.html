@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trend Adjusted Moving Average Simulator</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f7fb;
+margin:20px;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:8px;
+box-shadow:0 0 10px #ccc;
+}
+
+h2{
+background:#005a9c;
+color:white;
+padding:12px;
+border-radius:5px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+border:1px solid #ccc;
+padding:8px;
+text-align:center;
+}
+
+input{
+width:80px;
+text-align:center;
+}
+
+button{
+padding:10px 15px;
+margin:5px;
+background:#005a9c;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#003f73;
+}
+
+.result{
+margin-top:20px;
+padding:15px;
+background:#eef7ff;
+border-left:5px solid #005a9c;
+}
+
+pre{
+background:#272822;
+color:#7CFC00;
+padding:10px;
+overflow:auto;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #005a9c;padding-bottom:10px;margin-bottom:15px">
+<div><img src="data:image/png;base64,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" style="height:70px"></div>
+<div style="text-align:right;font-family:Arial">
+<h2 style="margin:0;color:#005a9c;background:none">BISP Trainings</h2>
+<div><b>Mobile:</b> +91 7694095404</div>
+<div><b>Website:</b> www.bisptrainings.com</div>
+</div></div>
+<h2>Trend Adjusted Moving Average Simulator</h2>
+
+<p>Enter Monthly Income</p>
+
+<table>
+
+<tr>
+<th>Jan</th>
+<th>Feb</th>
+<th>Mar</th>
+<th>Apr</th>
+<th>May</th>
+<th>Jun</th>
+<th>Jul</th>
+<th>Aug</th>
+<th>Sep</th>
+<th>Oct</th>
+<th>Nov</th>
+<th>Dec</th>
+</tr>
+
+<tr>
+
+<td><input id="m1" value="32000"></td>
+<td><input id="m2" value="36000"></td>
+<td><input id="m3" value="34000"></td>
+<td><input id="m4" value="35500"></td>
+<td><input id="m5" value="36000"></td>
+<td><input id="m6" value="38500"></td>
+<td><input id="m7" value="42000"></td>
+<td><input id="m8" value="43000"></td>
+<td><input id="m9" value="40000"></td>
+<td><input id="m10" value="41500"></td>
+<td><input id="m11" value="42000"></td>
+<td><input id="m12" value="44000"></td>
+
+</tr>
+
+</table>
+
+<br>
+
+<button onclick="calculate()">Calculate</button>
+
+<button onclick="showCalc()">Show Calculation</button>
+
+<button onclick="showEssbase()">Show Essbase Calculation</button>
+
+<button onclick="exportExcel()">Export in Excel</button>
+
+<button onclick="location.reload()">Reset</button>
+
+<button onclick="window.open('https://sonalji2022.github.io/BISP-Trainings/EPM%20Skills%20Assessment.html')">
+EPM Skills Assessment
+</button>
+
+
+
+<div id="output" class="result">
+Result will appear here.
+</div>
+
+</div>
+
+<script>
+
+function getValues(){
+
+let arr=[];
+
+for(let i=1;i<=12;i++)
+arr.push(Number(document.getElementById("m"+i).value));
+
+return arr;
+
+}
+
+function calculate(){
+
+let data=getValues();
+
+let result=[];
+
+for(let i=0;i<data.length-2;i++){
+
+let avg=(data[i]+data[i+1]+data[i+2])/3;
+
+result.push(avg.toFixed(2));
+
+}
+
+document.getElementById("output").innerHTML=
+"<b>3-Month Moving Average</b><br><br>"+result.join(" , ");
+
+}
+
+function showCalc(){
+
+let d=getValues();
+
+let txt="Example Calculation\n\n";
+
+txt+="("+d[0]+" + "+d[1]+" + "+d[2]+") / 3\n\n";
+
+txt+="= "+((d[0]+d[1]+d[2])/3).toFixed(2);
+
+document.getElementById("output").innerHTML="<pre>"+txt+"</pre>";
+
+}
+
+function showEssbase(){
+
+let txt=`FIX("Jan":"Dec","FY26","Working")
+
+"Trend Avg"=
+
+("Jan"+"Feb"+"Mar")/3;
+
+ENDFIX`;
+
+document.getElementById("output").innerHTML="<pre>"+txt+"</pre>";
+
+}
+
+function exportExcel(){
+
+let csv="Month,Income\n";
+
+let months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let values=getValues();
+
+for(let i=0;i<12;i++){
+
+csv+=months[i]+","+values[i]+"\n";
+
+}
+
+let blob=new Blob([csv],{type:"text/csv"});
+
+let link=document.createElement("a");
+
+link.href=URL.createObjectURL(blob);
+
+link.download="Trend_Adjusted_Moving_Average.csv";
+
+link.click();
+
+}
+
+</script>
+
+</body>
+</html>
