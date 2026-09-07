@@ -1,0 +1,80 @@
+# Oracle EPM Predictive Cash Forecasting — Weekly Forecasting Advanced Lab
+
+An advanced training and implementation guide for designing a weekly Predictive Cash Forecasting solution using Oracle EPM concepts.
+
+## What This Repository Contains
+
+This repository provides supporting material for an advanced 13-week rolling cash forecasting model.
+
+### Topics Covered
+
+* Weekly cash forecasting design
+* 13-week rolling forecast
+* 26-week forecasting considerations
+* Weekly calendar design
+* Cash-flow dimensional modeling
+* Forecast method governance
+* ERP/EPM integration
+* Weekly operating cycle
+* Liquidity scenario analysis
+* Forecast Value Add (FVA)
+* Security and workflow
+* Automation
+* Production readiness
+* Troubleshooting
+
+## Example Business Model
+
+The training case uses:
+
+* Opening Cash: $31M
+* Minimum Cash Buffer: $15M
+* Undrawn Revolver: $25M
+* Investment Threshold: $10M above buffer
+* Forecast Horizon: 13 weeks
+
+## Forecast Formula
+
+Closing Cash = Opening Cash + Net Cash Flow
+
+Net Cash Flow = Cash Inflows - Cash Outflows
+
+## Key Forecasting Principle
+
+Different cash-flow categories may require different forecasting methods.
+
+Examples include:
+
+* Customer receipts → ML / driver / transaction timing
+* Supplier payments → transaction / driver
+* Payroll → driver
+* Tax → event / manual driver
+* Capex → milestone / driver
+* Interest → formula / treasury driver
+
+## Advanced Topics
+
+The guide also demonstrates stress scenarios, liquidity decisioning, FVA analysis, workflow controls, audit requirements and production troubleshooting.
+
+## Full PDF Guide
+
+[Oracle EPM Predictive Cash Forecasting – Weekly Forecasting Advanced Lab Guide](https://khushbu1981chawhan.github.io/bisptrainings/Oracle_EPM_Predictive_Cash_Forecasting_Weekly_Forecasting_Advanced_Lab_Guide.pdf)
+
+## Intended Audience
+
+* Oracle EPM Consultants
+* Oracle Planning Consultants
+* Treasury Professionals
+* FP&A Professionals
+* Cash Managers
+* Finance Transformation Teams
+* Enterprise Architects
+* EPM Administrators
+* Finance Technology Professionals
+
+## Brand
+
+BISP Trainings
+[www.bisptrainings.com](http://www.bisptrainings.com)
+
+This repository is intended for educational and professional training purposes.
