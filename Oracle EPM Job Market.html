@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BISP Oracle EPM Job Market Simulator</title>
+<style>
+:root {
+  --ink:#162033; --muted:#667085; --line:#e5e7eb; --bg:#f6f8fb; --card:#fff;
+  --brand:#2563eb; --brand2:#f97316; --green:#16a34a; --red:#dc2626; --gold:#d97706;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.topbar{max-width:1500px;margin:auto;padding:14px 20px;display:flex;align-items:center;gap:16px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px} .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:grid;place-items:center;font-weight:800}
+.brand h1{font-size:18px;margin:0} .brand small{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap} button{border:1px solid var(--line);background:white;padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--ink)} button.primary{background:var(--brand);color:#fff;border-color:var(--brand)} button:hover{filter:brightness(.98)}
+.shell{max-width:1500px;margin:18px auto;padding:0 18px 40px;display:grid;grid-template-columns:300px 1fr;gap:18px}
+.panel,.card{background:var(--card);border:1px solid var(--line);border-radius:16px}
+.sidebar{padding:16px;align-self:start;position:sticky;top:86px;max-height:calc(100vh - 105px);overflow:auto}
+.sidebar h3{margin:0 0 12px} .field{margin:0 0 14px} label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:#475467} input,select{width:100%;padding:10px 11px;border:1px solid #d0d5dd;border-radius:10px;background:#fff;font-size:14px}
+.rangeRow{display:grid;grid-template-columns:1fr 1fr;gap:8px} .checkgrid{display:grid;gap:8px} .chipRow{display:flex;flex-wrap:wrap;gap:6px} .chip{padding:7px 9px;border:1px solid #d0d5dd;border-radius:999px;background:#fff;font-size:12px;cursor:pointer} .chip.active{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+.main{min-width:0} .notice{padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;color:#9a3412;font-size:13px;margin-bottom:14px}
+.tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap} .tab{padding:10px 14px;border-radius:10px;background:#fff;border:1px solid var(--line);cursor:pointer;font-weight:700} .tab.active{background:#111827;color:#fff;border-color:#111827}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:12px;margin-bottom:14px} .kpi{padding:14px} .kpi .v{font-size:24px;font-weight:800} .kpi .l{font-size:12px;color:var(--muted);margin-top:4px}
+.report-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px} .section{padding:16px} .section h3{margin:0 0 12px;font-size:16px} .insight{padding:10px 12px;background:#f8fafc;border-left:4px solid var(--brand);border-radius:8px;margin:8px 0;font-size:13px}
+.chartgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px} .chartcard{padding:14px} .charttitle{font-size:14px;font-weight:800;margin-bottom:8px} svg{width:100%;height:280px;display:block} .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff} table{width:100%;border-collapse:collapse;min-width:1050px} th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:12px;vertical-align:top} th{position:sticky;top:0;background:#f9fafb;z-index:1;font-size:11px;text-transform:uppercase;letter-spacing:.03em} tr:hover td{background:#fbfdff}
+.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:10px;margin:2px 3px 2px 0} .mode{background:#ecfdf3;color:#027a48} .salary{font-weight:700}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.fitbox{display:grid;grid-template-columns:1fr 1fr;gap:14px} .fitcontrols{padding:16px} .fitresults{padding:16px} .scorebar{height:8px;background:#eef2f6;border-radius:999px;overflow:hidden} .scorefill{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2))} .match{padding:10px 0;border-bottom:1px solid var(--line)} .match:last-child{border-bottom:0}
+.footer{max-width:1500px;margin:0 auto 24px;padding:0 18px;color:var(--muted);font-size:12px}
+@media(max-width:1100px){.shell{grid-template-columns:1fr}.sidebar{position:relative;top:auto;max-height:none}.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}.report-grid,.chartgrid,.fitbox{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}}
+@media print{header,.sidebar,.tabs,.actions,.notice{display:none!important}.shell{display:block;margin:0;padding:0}body{background:#fff}.panel,.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">B</div>
+      <div>
+        <h1>Oracle EPM Job Market Simulator</h1>
+        <small>BISP Trainings • Report + Table + Charts + Candidate Fit</small>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="csvBtn">Export CSV</button>
+      <button id="jsonBtn">Export JSON</button>
+      <button id="printBtn">Print / Save PDF</button>
+      <button class="primary" id="resetBtn">Reset</button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="panel sidebar">
+    <h3>Filters</h3>
+    <div class="field"><label>Search role / company / skill</label><input id="q" placeholder="e.g. FCCS, PwC, Planning"></div>
+    <div class="field"><label>Location</label><select id="location"><option value="">All locations</option></select></div>
+    <div class="field"><label>Company</label><select id="company"><option value="">All companies</option></select></div>
+    <div class="field"><label>Work mode</label><select id="mode"><option value="">All modes</option><option>Hybrid</option><option>Remote</option><option>Work from office</option></select></div>
+    <div class="field"><label>Experience range (years)</label><div class="rangeRow"><input id="expMin" type="number" min="0" max="40" value="0"><input id="expMax" type="number" min="0" max="40" value="40"></div></div>
+    <div class="field"><label>Salary floor (₹ LPA, where disclosed)</label><input id="salaryFloor" type="number" min="0" max="100" value="0"></div>
+    <div class="field"><label>Module quick filters</label><div class="chipRow" id="moduleChips"></div></div>
+    <div class="field"><label>Only roles with disclosed salary</label><select id="salaryOnly"><option value="">No</option><option value="yes">Yes</option></select></div>
+    <button class="primary" style="width:100%" id="applyBtn">Apply filters</button>
+  </aside>
+
+  <main class="main">
+    <div class="notice">Source note: this simulator is structured from readable job-listing screenshots in the uploaded Naukri.com document. It is a training / analytical simulator, not a live Naukri feed, and the uploaded document contains image-based pages rather than machine-readable job records.</div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="report">Report</button>
+      <button class="tab" data-tab="table">Tabular View</button>
+      <button class="tab" data-tab="charts">Charts</button>
+      <button class="tab" data-tab="fit">Candidate Fit</button>
+    </div>
+
+    <section id="report" class="tabpane">
+      <div class="kpis" id="kpis"></div>
+      <div class="report-grid">
+        <div class="panel section">
+          <h3>Executive Market Report</h3>
+          <div id="reportText"></div>
+        </div>
+        <div class="panel section">
+          <h3>Top Modules</h3>
+          <div id="topModules"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="table" class="tabpane" hidden>
+      <div class="tableWrap"><table><thead><tr>
+        <th>#</th><th>Role</th><th>Company</th><th>Experience</th><th>Salary</th><th>Location</th><th>Mode</th><th>Modules / Skills</th><th>Rating</th><th>Freshness</th>
+      </tr></thead><tbody id="tbody"></tbody></table></div>
+    </section>
+
+    <section id="charts" class="tabpane" hidden>
+      <div class="chartgrid">
+        <div class="panel chartcard"><div class="charttitle">Roles by location</div><svg id="locationChart" viewBox="0 0 600 280"></svg></div>
+        <div class="panel chartcard"><div class="charttitle">Demand by Oracle EPM module</div><svg id="moduleChart" viewBox="0 0 600 280"></svg></div>
+        <div class="panel chartcard"><div class="charttitle">Experience distribution</div><svg id="expChart" viewBox="0 0 600 280"></svg></div>
+        <div class="panel chartcard"><div class="charttitle">Salary disclosure analysis</div><svg id="salaryChart" viewBox="0 0 600 280"></svg></div>
+      </div>
+    </section>
+
+    <section id="fit" class="tabpane" hidden>
+      <div class="fitbox">
+        <div class="panel fitcontrols">
+          <h3 style="margin-top:0">Candidate Profile</h3>
+          <div class="field"><label>Your experience (years)</label><input id="candExp" type="number" min="0" max="40" value="6"></div>
+          <div class="field"><label>Your skills / modules (comma separated)</label><input id="candSkills" value="FCCS, ARCS, Planning"></div>
+          <div class="field"><label>Preferred location</label><input id="candLocation" value="Hyderabad"></div>
+          <div class="field"><label>Preferred work mode</label><select id="candMode"><option value="">Any</option><option>Hybrid</option><option>Remote</option></select></div>
+          <button class="primary" id="matchBtn">Calculate Job Fit</button>
+          <p style="color:var(--muted);font-size:12px">Fit score uses experience overlap, skill overlap, location match and work-mode match. It is a transparent training heuristic—not a recruiter score.</p>
+        </div>
+        <div class="panel fitresults">
+          <h3 style="margin-top:0">Best Matches</h3>
+          <div id="matches"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="footer">BISP Trainings • www.bisptrainings.com • Call Us: +91 769-4095-404</div>
+
+<script>
+const JOBS = [{"title": "Oracle EPM Consultant", "company": "Infosys", "expMin": 2, "expMax": 7, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["Planning", "Essbase", "Financials"], "rating": 3.7, "posted": "1 day ago"}, {"title": "Oracle EPM Consultant", "company": "Cognizant", "expMin": 6, "expMax": 11, "salaryMin": 15, "salaryMax": 30, "location": "Hyderabad / Pune", "mode": "Hybrid", "modules": ["EPM", "Planning"], "rating": 3.7, "posted": "1 day ago"}, {"title": "Oracle EPM Consultant Lead", "company": "WNS", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Hyderabad / Pune", "mode": "Hybrid", "modules": ["EPBCS", "FCCS", "NRCS"], "rating": 4.1, "posted": "1 day ago"}, {"title": "HFM Consultant", "company": "Nish Technologies", "expMin": 5, "expMax": 10, "salaryMin": 20, "salaryMax": 35, "location": "Hyderabad", "mode": "Hybrid", "modules": ["HFM", "Hyperion Planning"], "rating": null, "posted": "1 day ago"}, {"title": "Oracle EPM Planning Architect", "company": "Grant Thornton", "expMin": 10, "expMax": 15, "salaryMin": null, "salaryMax": null, "location": "Kolkata / Hyderabad", "mode": "Hybrid", "modules": ["Planning", "PBCS", "EPBCS"], "rating": 4.1, "posted": "4 days ago"}, {"title": "Analyst 1 - Oracle EPM Cloud", "company": "Rekrut India", "expMin": 4, "expMax": 9, "salaryMin": 12, "salaryMax": 18, "location": "Gurugram", "mode": "Hybrid", "modules": ["EPM Cloud", "EDMCS", "DRM"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM Consultant Walk-in", "company": "Tata Consultancy Services", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["Oracle EPM", "Planning"], "rating": 3.3, "posted": "1 day ago"}, {"title": "Oracle EPM Consultant", "company": "Valuelabs", "expMin": 10, "expMax": 20, "salaryMin": 40, "salaryMax": 50, "location": "Remote", "mode": "Remote", "modules": ["PBCS", "FCCS", "ARCS", "Oracle EPM"], "rating": 3.4, "posted": "1 day ago"}, {"title": "HFM Consultant", "company": "Nish Technologies", "expMin": 5, "expMax": 10, "salaryMin": 20, "salaryMax": 35, "location": "Hyderabad / Chennai", "mode": "Hybrid", "modules": ["HFM", "Hyperion Financial Management"], "rating": null, "posted": "1 day ago"}, {"title": "Walk-in Oracle EPM Consultant - ARCS/FCCS", "company": "PwC", "expMin": 10, "expMax": 19, "salaryMin": null, "salaryMax": null, "location": "Hyderabad / Coimbatore", "mode": "Hybrid", "modules": ["ARCS", "FCCS", "Oracle EPM"], "rating": 4.0, "posted": "1 day ago"}, {"title": "Oracle EPM ARCS Functional Consultant", "company": "Multinational Company", "expMin": 6, "expMax": 8, "salaryMin": 25, "salaryMax": 40, "location": "Hyderabad", "mode": "Hybrid", "modules": ["ARCS", "Account Reconciliation"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM Migration Architect", "company": "Cerebra", "expMin": 10, "expMax": 16, "salaryMin": 70, "salaryMax": 70, "location": "India", "mode": "Hybrid", "modules": ["Oracle EPM", "Migration", "Architecture"], "rating": 3.2, "posted": "4 days ago"}, {"title": "Oracle EPM FCCS Functional Consultant", "company": "Multinational Company", "expMin": 6, "expMax": 8, "salaryMin": 25, "salaryMax": 40, "location": "Hyderabad", "mode": "Hybrid", "modules": ["FCCS", "Financial Consolidation"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM Consultant - Senior Associate", "company": "PwC", "expMin": 4, "expMax": 8, "salaryMin": null, "salaryMax": null, "location": "Hyderabad / Kolkata", "mode": "Hybrid", "modules": ["EPM", "Implementation"], "rating": 4.0, "posted": "1 day ago"}, {"title": "Oracle EPM Narrative Reporting Functional Consultant", "company": "Multinational Company", "expMin": 6, "expMax": 8, "salaryMin": 25, "salaryMax": 40, "location": "Hyderabad", "mode": "Hybrid", "modules": ["Narrative Reporting", "EPRCS", "NRCS"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM Consultant - Narrative Reporting", "company": "CareerNet", "expMin": 4, "expMax": 9, "salaryMin": null, "salaryMax": null, "location": "Gurugram", "mode": "Hybrid", "modules": ["Narrative Reporting", "Oracle EPM"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM Lead", "company": "Hansacore", "expMin": 10, "expMax": 20, "salaryMin": null, "salaryMax": null, "location": "Chennai", "mode": "Hybrid", "modules": ["EPM", "FDMEE", "PBCS"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM ARCS Functional Consultant", "company": "Jade Global", "expMin": 10, "expMax": 20, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["ARCS", "EPM Architecture"], "rating": 3.4, "posted": "1 day ago"}, {"title": "Oracle EPM - FCCS, ARCS", "company": "Jade Global", "expMin": 10, "expMax": 20, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["FCCS", "ARCS", "EPM"], "rating": 3.4, "posted": "1 day ago"}, {"title": "Oracle EPM Consultant", "company": "Relation Global", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["Oracle EPM", "Production Support"], "rating": 3.7, "posted": "1 day ago"}, {"title": "Oracle EPM - PCMCS", "company": "Tata Consultancy Services", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["PCMCS", "Oracle EPM"], "rating": 3.3, "posted": "3 days ago"}, {"title": "Oracle EPM - EPBCS", "company": "Tata Consultancy Services", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["EPBCS", "EPM Cloud"], "rating": 3.3, "posted": "1 day ago"}, {"title": "Oracle EPM Functional Consultant - FCCS/HFM", "company": "Multinational Company", "expMin": 6, "expMax": 8, "salaryMin": 25, "salaryMax": 40, "location": "Hyderabad", "mode": "Hybrid", "modules": ["FCCS", "HFM", "Financial Consolidation"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM Consultant", "company": "Clover Infotech", "expMin": 12, "expMax": 20, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["EPBCS", "PBCS", "Planning"], "rating": 3.3, "posted": "1 week ago"}, {"title": "Oracle EPM Cloud Specialist", "company": "Diksha Technologies", "expMin": 4, "expMax": 9, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["EPM Cloud", "Data Management", "User Provisioning"], "rating": 4.0, "posted": "1 week ago"}, {"title": "Oracle EPM - PBCS", "company": "Jade Global", "expMin": 6, "expMax": 11, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["PBCS", "Planning"], "rating": 3.4, "posted": "1 day ago"}, {"title": "Oracle EPM Developer", "company": "Tekskills India", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Pune / Secunderabad", "mode": "Hybrid", "modules": ["EPM", "OCI Integrations", "Development"], "rating": null, "posted": "2 weeks ago"}, {"title": "Senior Oracle EPM Planning Consultant", "company": "Strategic Resources International", "expMin": 7, "expMax": 12, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["PBCS", "Planning", "Hyperion Planning"], "rating": null, "posted": "4 days ago"}, {"title": "Oracle EPM Consultant", "company": "Oracle", "expMin": 7, "expMax": 24, "salaryMin": 35, "salaryMax": 60, "location": "Hyderabad / Bengaluru", "mode": "Hybrid", "modules": ["Oracle EPM", "PaaS", "Java"], "rating": 3.3, "posted": "1 week ago"}, {"title": "Oracle EPM Consultant", "company": "CGI", "expMin": 10, "expMax": 30, "salaryMin": null, "salaryMax": null, "location": "Chennai / Bengaluru", "mode": "Hybrid", "modules": ["EPM", "Hyperion Planning", "Essbase"], "rating": 4.0, "posted": "1 week ago"}, {"title": "Oracle EPM - ARCS Senior Associate", "company": "PwC", "expMin": 3, "expMax": 8, "salaryMin": null, "salaryMax": null, "location": "Hyderabad / Noida / Pune", "mode": "Hybrid", "modules": ["ARCS", "Oracle EPM"], "rating": 3.3, "posted": "2 weeks ago"}, {"title": "Oracle ARCS Consultant", "company": "Peloton", "expMin": 2, "expMax": 6, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["ARCS", "Financial Systems"], "rating": 3.7, "posted": "2 weeks ago"}, {"title": "Oracle EPM Consultant", "company": "Verven India", "expMin": 4, "expMax": 18, "salaryMin": 20, "salaryMax": 35, "location": "Hyderabad", "mode": "Hybrid", "modules": ["ARCS", "FDMEE", "Oracle EPM"], "rating": null, "posted": "2 weeks ago"}, {"title": "Oracle EPM Techno-Functional Consultant", "company": "Cerebra", "expMin": 8, "expMax": 11, "salaryMin": null, "salaryMax": null, "location": "Navi Mumbai / Chennai", "mode": "Hybrid", "modules": ["PBCS", "FCCS", "EPBCS", "Planning"], "rating": 3.2, "posted": "2 weeks ago"}, {"title": "Oracle EPM Architect / Application Engineer", "company": "Athen Corporation", "expMin": 9, "expMax": 14, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["EPM Architecture", "Automation", "Semiconductor"], "rating": null, "posted": "2 weeks ago"}, {"title": "Oracle EPM - FCCS Consultant", "company": "PwC", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Hyderabad / Pune", "mode": "Hybrid", "modules": ["FCCS", "Oracle EPM"], "rating": 3.3, "posted": "2 weeks ago"}, {"title": "Oracle EPM EPBCS Consultant", "company": "OSI Digital", "expMin": 3, "expMax": 8, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["EPBCS", "Oracle EPM"], "rating": 3.5, "posted": "2 weeks ago"}, {"title": "Oracle EPM Cloud Planning Consultant", "company": "Peloton", "expMin": 5, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["Planning", "EPM Cloud"], "rating": 3.7, "posted": "2 weeks ago"}, {"title": "Oracle EPM Developer", "company": "Qloron Technology", "expMin": 3, "expMax": 6, "salaryMin": null, "salaryMax": null, "location": "Mumbai", "mode": "Hybrid", "modules": ["EPM Developer", "Financial Reporting", "Hyperion"], "rating": 4.5, "posted": "2 weeks ago"}, {"title": "Senior Consultant - Oracle EPM Narrative Reporting", "company": "Argano Software", "expMin": 4, "expMax": 8, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["Narrative Reporting", "Oracle EPM"], "rating": 3.8, "posted": "2 weeks ago"}, {"title": "Oracle EPM FCCS Consultant", "company": "Rarr Technologies", "expMin": 9, "expMax": 12, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["FCCS", "Financial Reporting"], "rating": 4.1, "posted": "2 weeks ago"}, {"title": "Senior Oracle EPM Quota Planning Lead", "company": "Jade Global", "expMin": 7, "expMax": 14, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["Quota Planning", "REST API", "EPM Cloud"], "rating": 3.3, "posted": "2 weeks ago"}, {"title": "Oracle EPM Functional Consultant", "company": "Avalon Software Services", "expMin": 6, "expMax": 11, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["EPBCS", "Narrative Reporting", "FCCS", "ARCS"], "rating": null, "posted": "2 weeks ago"}, {"title": "Oracle EPM Professional", "company": "Cloudvice", "expMin": 2, "expMax": 7, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["EPM", "ERP", "Hyperion Cloud"], "rating": 4.1, "posted": "2 weeks ago"}, {"title": "Oracle EPM Consultant", "company": "People Growth HR Solutions", "expMin": 1, "expMax": 6, "salaryMin": null, "salaryMax": null, "location": "Hyderabad", "mode": "Hybrid", "modules": ["Automation", "Data Management", "Production Support"], "rating": null, "posted": "2 weeks ago"}, {"title": "Oracle EPM - ARCS (Cloud Solutions)", "company": "Tata Consultancy Services", "expMin": 6, "expMax": 11, "salaryMin": null, "salaryMax": null, "location": "Kolkata", "mode": "Hybrid", "modules": ["ARCS", "EPM Cloud", "Financial Systems"], "rating": 3.3, "posted": "2 weeks ago"}, {"title": "Oracle EPM Integration Lead", "company": "Grant Thornton", "expMin": 8, "expMax": 12, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["Integration", "EPM", "Automation", "SAP"], "rating": 3.1, "posted": "2 weeks ago"}, {"title": "Oracle Fusion Cloud EPM EPCM Functional Consultant", "company": "Kash Solutions", "expMin": 6, "expMax": 13, "salaryMin": null, "salaryMax": null, "location": "Hyderabad / Mumbai", "mode": "Hybrid", "modules": ["EPCM", "PCMCS", "SQL", "Snowflake"], "rating": null, "posted": "2 weeks ago"}, {"title": "Senior Oracle ERP/EPM Integration Consultant", "company": "CGI", "expMin": 8, "expMax": 12, "salaryMin": null, "salaryMax": null, "location": "Bengaluru", "mode": "Hybrid", "modules": ["EPM Integration", "HTML", "CSS", "Bootstrap"], "rating": 4.0, "posted": "2 weeks ago"}, {"title": "Oracle SAAS EPM-EDMCS Lead Functional Analyst", "company": "Sopra Steria", "expMin": 8, "expMax": 10, "salaryMin": null, "salaryMax": null, "location": "Noida", "mode": "Hybrid", "modules": ["EDMCS", "Data Management", "Master Data"], "rating": 3.9, "posted": "2 weeks ago"}];
+let filtered = [...JOBS];
+let selectedModules = new Set();
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const uniq = arr => [...new Set(arr)].sort((a,b)=>a.localeCompare(b));
+const esc = s => String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function fillSelect(id, values){
+  const el=$(id); values.forEach(v=>{const o=document.createElement('option');o.textContent=v;o.value=v;el.appendChild(o)})
+}
+fillSelect('#location', uniq(JOBS.map(j=>j.location)));
+fillSelect('#company', uniq(JOBS.map(j=>j.company)));
+
+const priorityModules = ["Planning","PBCS","EPBCS","FCCS","ARCS","PCMCS","EDMCS","Narrative Reporting","HFM","EPM Cloud","Integration"];
+priorityModules.forEach(m=>{
+  const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=m;
+  b.addEventListener('click',()=>{ b.classList.toggle('active'); b.classList.contains('active')?selectedModules.add(m):selectedModules.delete(m); applyFilters(); });
+  $('#moduleChips').appendChild(b);
+});
+
+function applyFilters(){
+  const q=$('#q').value.trim().toLowerCase(), loc=$('#location').value, comp=$('#company').value, mode=$('#mode').value;
+  const emin=Number($('#expMin').value||0), emax=Number($('#expMax').value||40), floor=Number($('#salaryFloor').value||0);
+  const salaryOnly=$('#salaryOnly').value==='yes';
+  filtered=JOBS.filter(j=>{
+    const hay=[j.title,j.company,j.location,j.mode,...j.modules].join(' ').toLowerCase();
+    const expOk=j.expMax>=emin && j.expMin<=emax;
+    const salOk= floor<=0 || (j.salaryMax!=null && j.salaryMax>=floor);
+    const modsOk= selectedModules.size===0 || [...selectedModules].some(m=>j.modules.some(x=>x.toLowerCase().includes(m.toLowerCase()) || m.toLowerCase().includes(x.toLowerCase())));
+    return (!q||hay.includes(q)) && (!loc||j.location===loc) && (!comp||j.company===comp) && (!mode||j.mode===mode) && expOk && salOk && modsOk && (!salaryOnly || j.salaryMin!=null);
+  });
+  renderAll();
+}
+
+function stats(){
+  const n=filtered.length;
+  const companies=uniq(filtered.map(j=>j.company)).length;
+  const expMid=filtered.map(j=>(j.expMin+j.expMax)/2);
+  const avgExp=n?expMid.reduce((a,b)=>a+b,0)/n:0;
+  const sal=filtered.filter(j=>j.salaryMin!=null);
+  const avgSalary=sal.length?sal.map(j=>(j.salaryMin+j.salaryMax)/2).reduce((a,b)=>a+b,0)/sal.length:null;
+  const remote=filtered.filter(j=>j.mode==='Remote').length;
+  return {n,companies,avgExp,avgSalary,salaryKnown:sal.length,remote};
+}
+
+function counter(arr, getter){
+  const o={}; arr.forEach(x=>{const vals=getter(x); (Array.isArray(vals)?vals:[vals]).forEach(v=>o[v]=(o[v]||0)+1)}); return o;
+}
+function topEntries(obj,n=8){return Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n)}
+
+function renderKPIs(){
+  const s=stats();
+  const cards=[
+    ['Visible roles',s.n],
+    ['Companies',s.companies],
+    ['Avg. experience',s.avgExp.toFixed(1)+' yrs'],
+    ['Salary disclosed',s.salaryKnown],
+    ['Avg. disclosed salary',s.avgSalary==null?'N/A':'₹'+s.avgSalary.toFixed(1)+' LPA'],
+    ['Remote roles',s.remote]
+  ];
+  $('#kpis').innerHTML=cards.map(([l,v])=>`<div class="card kpi"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join('');
+}
+
+function renderReport(){
+  const s=stats();
+  const locs=topEntries(counter(filtered,j=>j.location),3);
+  const mods=topEntries(counter(filtered,j=>j.modules),6);
+  const senior=filtered.filter(j=>j.expMin>=8).length;
+  const mid=filtered.filter(j=>j.expMin<8 && j.expMax>=4).length;
+  const junior=filtered.filter(j=>j.expMax<5).length;
+  let insights=[];
+  insights.push(`Current filter returns <b>${s.n}</b> roles across <b>${s.companies}</b> companies.`);
+  if(locs.length) insights.push(`Largest visible location buckets: <b>${locs.map(x=>esc(x[0])+' ('+x[1]+')').join(', ')}</b>.`);
+  if(mods.length) insights.push(`Most frequent skill/module signals: <b>${mods.map(x=>esc(x[0])+' ('+x[1]+')').join(', ')}</b>.`);
+  insights.push(`Experience mix: <b>${junior}</b> junior-leaning, <b>${mid}</b> mid-level overlap, <b>${senior}</b> senior/lead-oriented roles.`);
+  insights.push(`Salary is disclosed in <b>${s.salaryKnown}</b> of ${s.n} visible records; treat salary analytics as partial.`);
+  $('#reportText').innerHTML=insights.map(x=>`<div class="insight">${x}</div>`).join('');
+  $('#topModules').innerHTML=mods.map(([m,c])=>`<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:12px"><b>${esc(m)}</b><span>${c}</span></div><div class="scorebar"><div class="scorefill" style="width:${s.n?Math.min(100,c/s.n*100):0}%"></div></div></div>`).join('') || '<div class="empty">No data</div>';
+}
+
+function renderTable(){
+  $('#tbody').innerHTML = filtered.map((j,i)=>`<tr>
+    <td>${i+1}</td><td><b>${esc(j.title)}</b></td><td>${esc(j.company)}</td>
+    <td>${j.expMin}–${j.expMax} yrs</td>
+    <td class="salary">${j.salaryMin==null?'Not disclosed':'₹'+j.salaryMin+'–'+j.salaryMax+' LPA'}</td>
+    <td>${esc(j.location)}</td><td><span class="badge mode">${esc(j.mode)}</span></td>
+    <td>${j.modules.map(m=>`<span class="badge">${esc(m)}</span>`).join('')}</td>
+    <td>${j.rating==null?'—':j.rating.toFixed(1)}</td><td>${esc(j.posted)}</td>
+  </tr>`).join('') || `<tr><td colspan="10" class="empty">No roles match these filters.</td></tr>`;
+}
+
+function drawBars(svgId, entries, opts={}){
+  const svg=$(svgId), W=600,H=280, left=150,right=25,top=16,bottom=22;
+  svg.innerHTML='';
+  if(!entries.length){svg.innerHTML='<text x="300" y="140" text-anchor="middle" fill="#667085">No data</text>';return}
+  const max=Math.max(...entries.map(x=>x[1]),1), row=(H-top-bottom)/entries.length;
+  entries.forEach(([label,val],i)=>{
+    const y=top+i*row+row*.18, h=row*.64, w=(W-left-right)*(val/max);
+    svg.insertAdjacentHTML('beforeend',`<text x="${left-8}" y="${y+h*.72}" text-anchor="end" font-size="11" fill="#475467">${esc(label.length>22?label.slice(0,21)+'…':label)}</text>
+      <rect x="${left}" y="${y}" rx="5" width="${w}" height="${h}" fill="#64748b"></rect>
+      <text x="${left+w+6}" y="${y+h*.72}" font-size="11" fill="#111827">${val}</text>`);
+  });
+}
+
+function drawExp(){
+  const bins=[['0–3',0],['4–6',0],['7–10',0],['11–15',0],['16+',0]];
+  filtered.forEach(j=>{const m=(j.expMin+j.expMax)/2; if(m<=3)bins[0][1]++; else if(m<=6)bins[1][1]++; else if(m<=10)bins[2][1]++; else if(m<=15)bins[3][1]++; else bins[4][1]++;});
+  drawBars('#expChart',bins);
+}
+function drawSalary(){
+  const yes=filtered.filter(j=>j.salaryMin!=null).length, no=filtered.length-yes;
+  drawBars('#salaryChart',[['Disclosed',yes],['Not disclosed',no]]);
+}
+function renderCharts(){
+  drawBars('#locationChart', topEntries(counter(filtered,j=>j.location),8));
+  drawBars('#moduleChart', topEntries(counter(filtered,j=>j.modules),9));
+  drawExp(); drawSalary();
+}
+
+function tokenizeSkills(s){return s.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)}
+function matchScore(j, exp, skills, loc, mode){
+  let score=0;
+  if(exp>=j.expMin && exp<=j.expMax) score+=40;
+  else {
+    const d=exp<j.expMin?j.expMin-exp:exp-j.expMax;
+    score+=Math.max(0,40-d*7);
+  }
+  const jm=j.modules.map(x=>x.toLowerCase());
+  const hits=skills.filter(s=>jm.some(m=>m.includes(s)||s.includes(m))).length;
+  score += skills.length?Math.min(35,(hits/skills.length)*35):0;
+  if(loc && j.location.toLowerCase().includes(loc.toLowerCase())) score+=15;
+  else if(!loc) score+=8;
+  if(mode && j.mode===mode) score+=10;
+  else if(!mode) score+=5;
+  return Math.round(Math.min(100,score));
+}
+function renderMatches(){
+  const exp=Number($('#candExp').value||0), skills=tokenizeSkills($('#candSkills').value), loc=$('#candLocation').value.trim(), mode=$('#candMode').value;
+  const rows=filtered.map(j=>({j,score:matchScore(j,exp,skills,loc,mode)})).sort((a,b)=>b.score-a.score).slice(0,8);
+  $('#matches').innerHTML=rows.map(x=>`<div class="match">
+    <div style="display:flex;justify-content:space-between;gap:10px"><div><b>${esc(x.j.title)}</b><div style="font-size:12px;color:#667085">${esc(x.j.company)} • ${esc(x.j.location)} • ${x.j.expMin}–${x.j.expMax} yrs</div></div><div style="font-size:20px;font-weight:800">${x.score}%</div></div>
+    <div class="scorebar" style="margin-top:7px"><div class="scorefill" style="width:${x.score}%"></div></div>
+  </div>`).join('') || '<div class="empty">No matching roles.</div>';
+}
+
+function renderAll(){renderKPIs();renderReport();renderTable();renderCharts();renderMatches();}
+
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+  $$('.tabpane').forEach(p=>p.hidden=true); $('#'+b.dataset.tab).hidden=false;
+  if(b.dataset.tab==='charts') setTimeout(renderCharts,10);
+}));
+['#q','#location','#company','#mode','#expMin','#expMax','#salaryFloor','#salaryOnly'].forEach(s=>$(s).addEventListener('input',applyFilters));
+$('#applyBtn').addEventListener('click',applyFilters);
+$('#matchBtn').addEventListener('click',renderMatches);
+$('#printBtn').addEventListener('click',()=>window.print());
+$('#resetBtn').addEventListener('click',()=>{
+  $('#q').value='';$('#location').value='';$('#company').value='';$('#mode').value='';$('#expMin').value=0;$('#expMax').value=40;$('#salaryFloor').value=0;$('#salaryOnly').value='';
+  selectedModules.clear(); $$('.chip').forEach(x=>x.classList.remove('active')); filtered=[...JOBS]; renderAll();
+});
+function download(name,text,type){
+  const blob=new Blob([text],{type}), url=URL.createObjectURL(blob), a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
+}
+$('#jsonBtn').addEventListener('click',()=>download('oracle_epm_filtered_jobs.json',JSON.stringify(filtered,null,2),'application/json'));
+$('#csvBtn').addEventListener('click',()=>{
+  const rows=[['Role','Company','Exp Min','Exp Max','Salary Min LPA','Salary Max LPA','Location','Mode','Modules','Rating','Freshness'],
+    ...filtered.map(j=>[j.title,j.company,j.expMin,j.expMax,j.salaryMin??'',j.salaryMax??'',j.location,j.mode,j.modules.join('|'),j.rating??'',j.posted])];
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+  download('oracle_epm_filtered_jobs.csv',csv,'text/csv');
+});
+renderAll();
+</script>
+</body>
+</html>
